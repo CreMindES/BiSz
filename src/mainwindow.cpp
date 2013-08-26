@@ -1,14 +1,5 @@
 #include "mainwindow.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-#include "ui_mainwindow.h"
-
->>>>>>> 2307d5a6beea8efef46df353b36c8c58330782a1
-=======
-#include "ui_mainwindow.h"
-
->>>>>>> 2307d5a6beea8efef46df353b36c8c58330782a1
+//#include "ui_mainwindow.h"
 #include "itemnumbersearch.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -24,13 +15,5 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
     //delete ui;
-=======
-    delete ui;
->>>>>>> 2307d5a6beea8efef46df353b36c8c58330782a1
-=======
-    delete ui;
->>>>>>> 2307d5a6beea8efef46df353b36c8c58330782a1
 }

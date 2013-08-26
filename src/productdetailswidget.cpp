@@ -217,11 +217,12 @@ bool ProductDetailsWidget::validateInputData()
         numberOfErrors++;
         errorDescriptionLabel->setText(trUtf8("Túl rövid idegen cikkszám!"));
     }
-
+/*
     if(descriptionTextEdit->document()->isEmpty()) {
         numberOfErrors++;
         errorDescriptionLabel->setText(trUtf8("Túl rövid leírás!"));
     }
+*/
     if(categoryComboBox->currentIndex() == -1) {
         numberOfErrors++;
         errorDescriptionLabel->setText(trUtf8("Nem adtál meg kategóriát!"));
@@ -431,20 +432,11 @@ void ProductDetailsWidget::on_discountedPriceSpinBox_valueChanged(double newDisc
     qDebug() << newDiscountedPrice/price;
     qDebug() << newDiscountedPrice/price * 100;
     qDebug() << 1.00 - newDiscountedPrice/price * 100;
-<<<<<<< HEAD
-<<<<<<< HEAD
     //int discountValue = int(100 - newDiscountedPrice/price * 100);
-=======
-    int discountValue = int(100 - newDiscountedPrice/price * 100);
->>>>>>> 2307d5a6beea8efef46df353b36c8c58330782a1
-=======
-    int discountValue = int(100 - newDiscountedPrice/price * 100);
->>>>>>> 2307d5a6beea8efef46df353b36c8c58330782a1
     //discountValueSpinBox->setValue(discountValue);
 }
 
 void ProductDetailsWidget::on_roundingUpButton_clicked()
 {
-
     priceSpinBox->setValue(ceil(priceSpinBox->value()));
 }
