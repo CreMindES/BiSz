@@ -95,16 +95,14 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     //searchLayout->addWidget(productPreviewCheckBox, 0, Qt::AlignLeft);
     searchLayout->addStretch();
     searchLayout->addWidget(searchMatchCountLabel);
-    //searchLayout->addWidget(text);
+    searchLayout->addSpacing(5);
 
     browserLayout->addLayout(searchLayout);
     //browserLayout->addWidget(createView(proxyModel));
     browserLayout->addWidget(itemTableView);
-    menuLayout->addSpacing(30);
     browserLayout->addWidget(productCountLabel);
-    menuLayout->addSpacing(20);
 
-    menuLayout->addSpacing(10);
+    menuLayout->addSpacing(60);
     menuLayout->addWidget(biszLogoLabel,0,Qt::AlignHCenter);
     menuLayout->addSpacing(50);
     menuLayout->addWidget(addButton, 0, Qt::AlignHCenter);
@@ -324,10 +322,12 @@ void ItemNumberSearch::searchInDatabase()
 
 void ItemNumberSearch::updateSearchMatchCountLabel()
 {
-    if(searchField->text().isEmpty())
-        searchMatchCountLabel->setText("");
-    else
+    if(searchField->text().isEmpty()) {
+        searchMatchCountLabel->clear();
+    }
+    else {
         searchMatchCountLabel->setText(QString::number(proxyModel->rowCount()).append(" db találat"));
+    }
 }
 
 void ItemNumberSearch::onOnlineSearchCheckBoxStateChanged()
