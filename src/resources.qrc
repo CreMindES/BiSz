@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/searchIcon.png</file>
+        <file>images/BiSzIcon.ico</file>
+        <file>images/logo.png</file>
+        <file>images/clearSearchLineEdit.jpg</file>
+        <file>images/error_icon.png</file>
+    </qresource>
+</RCC>
