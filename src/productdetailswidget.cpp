@@ -296,6 +296,12 @@ void ProductDetailsWidget::on_currentCategoryChange(int currentIndex)
 
     QStringList categoryListLevel_1;
 
+    //TODO: make this more elegant
+    categorySub1ListModel.setStringList(categoryListLevel_1);
+    categorySub2ListModel.setStringList(categoryListLevel_1);
+    categorySub1ComboBox->setHidden(true);
+    categorySub2ComboBox->setHidden(true);
+
     for(int i=0; i<db->categoryList.length(); ++i) {
         QStringList currentCategoryString = db->categoryList.at(i).split(" > ");
         QString currentCategoryLevel0 = currentCategoryString.value(0);
@@ -332,6 +338,9 @@ void ProductDetailsWidget::on_currentCategorySub1Change(int currentIndex)
     }
 
     QStringList categoryListLevel_2;
+
+    categorySub2ListModel.setStringList(categoryListLevel_2);
+    categorySub2ComboBox->setHidden(true);
 
     for(int i=0; i<db->categoryList.length(); ++i) {
         QStringList currentCategoryString = db->categoryList.at(i).split(" > ");

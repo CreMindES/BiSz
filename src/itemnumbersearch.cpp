@@ -1070,11 +1070,16 @@ void ItemNumberSearch::on_addButton_clicked()
     //productDialog->categoryComboBox->setCurrentIndex(188);
                 //myDatabase->categoryListLevel_0.);
 
+    //productDialog->categorySub1ListModel.setStringList(QStringList());
+    //productDialog->categorySub2ListModel.setStringList(QStringList());
+
     if(productDialog->exec()) {
         // qDebug() << "Add exec";
 
         // TODO: test if you can add new product to an empty database
         QSqlRecord newProductRecord = myModel->record(0);
+
+        //qDebug() << newProductRecord;
 
         newProductRecord.setValue("id", generateNewId());
         newProductRecord.setValue("name", productDialog->productNameLineEdit->text());
@@ -1128,7 +1133,10 @@ void ItemNumberSearch::on_addButton_clicked()
         //qDebug() << "category: " << category;
         //qDebug() << "category number: " << myDatabase->categoryList.indexOf(category) + 1;
 
-        myModel->submitAll();
+        //myModel->submitAll();
+
+        //qDebug() << "New \n \n";
+        //qDebug() << newProductRecord;
 
 //        BUG: QSqlError(-1, "", "")
         if( myModel->insertRecord(-1, newProductRecord) ) qDebug() << "New record Added.";
@@ -1137,7 +1145,10 @@ void ItemNumberSearch::on_addButton_clicked()
             qDebug() << myModel->lastError();
         }
 
-        if(!myModel->submitAll()) qDebug() << myModel->lastError();
+        if(!myModel->submitAll()) {
+            qDebug() << "Model error";
+            qDebug() << myModel->lastError();
+        }
 
         myModel->select();
         while(myModel->canFetchMore())
