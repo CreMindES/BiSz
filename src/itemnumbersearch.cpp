@@ -1162,6 +1162,11 @@ void ItemNumberSearch::on_addButton_clicked()
 
 void ItemNumberSearch::on_modifyButton_clicked()
 {
+    // Storing current row and column
+    QModelIndex selectedIndex = itemTableView->selectionModel()->currentIndex();
+    int row = selectedIndex.row();
+    int column = selectedIndex.column();
+
     // TODO: idegen cikkszám egyezés vizsgálata
     productDialog->setWindowTitle(trUtf8("BiSz - Termék adatainak módosítása"));
     productDialog->okButton->setText(trUtf8("Módosítás"));
@@ -1268,14 +1273,19 @@ void ItemNumberSearch::on_modifyButton_clicked()
             else qDebug() << "Failed to update record";
 
             myModel->select();
-            while(myModel->canFetchMore())
+            while(myModel->canFetchMore()) {
                 myModel->fetchMore();
+            }
+
+            selectedIndex = myModel->index(row, column);
+
+            itemTableView->scrollTo(selectedIndex, QAbstractItemView::PositionAtCenter);
+            itemTableView->selectRow(row);
 
         }
-        else qDebug() << "aaaa -.-";
-
-        itemTableView->scrollTo(itemTableView->currentIndex());
-        //itemTableView->selectRow(itemTableView->currentIndex().row());
+        else {
+            qDebug() << "aaaa -.-";
+        }
     }
 }
 

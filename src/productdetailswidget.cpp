@@ -326,12 +326,12 @@ void ProductDetailsWidget::on_currentCategoryChange(int currentIndex)
         categorySub1ComboBox->setHidden(true);
     }
 
-    qDebug() << "subcat1 lenght: " << categorySub1ListModel.stringList().length();
+    //qDebug() << "subcat1 lenght: " << categorySub1ListModel.stringList().length();
 }
 
 void ProductDetailsWidget::on_currentCategorySub1Change(int currentIndex)
 {
-     qDebug() << "subcat1 index: " << categorySub1ComboBox->currentIndex();
+     //qDebug() << "subcat1 index: " << categorySub1ComboBox->currentIndex();
 
      if(currentIndex<0) {
         return;
@@ -373,7 +373,7 @@ void ProductDetailsWidget::on_currentCategorySub1Change(int currentIndex)
         categorySub2ComboBox->setHidden(true);
     }
 
-         qDebug() << "subcat2 lenght: " << categorySub2ListModel.stringList().length();
+         //qDebug() << "subcat2 lenght: " << categorySub2ListModel.stringList().length();
 }
 
 void ProductDetailsWidget::updateProfitMargin(double purchasePrice, double webshopPrice)
