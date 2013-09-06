@@ -42,6 +42,7 @@ ProductDetailsWidget::ProductDetailsWidget(QWidget *parent, DatabaseManager *dat
 
     descriptionTextEdit = new QTextEdit;
     descriptionTextEdit->setFixedHeight(100);
+    descriptionTextEdit->setAcceptRichText(false);
 
     packageUnitLineEdit = new QLineEdit;
 
@@ -193,12 +194,12 @@ ProductDetailsWidget::ProductDetailsWidget(QWidget *parent, DatabaseManager *dat
             this,             SLOT(on_currentCategoryChange(int)));
     connect(categorySub1ComboBox, SIGNAL(currentIndexChanged(int)),
             this,                 SLOT(on_currentCategorySub1Change(int)));
-    connect(purchasePriceSpinBox, SIGNAL(valueChanged(double)),
-            this,                 SLOT(on_purchasePriceSpinBox_valueChanged(double)));
+    connect(purchasePriceSpinBox, SIGNAL(editingFinished()),
+            this,                 SLOT(on_purchasePriceSpinBox_valueChanged()));
     connect(profitMarginSpinBox, SIGNAL(valueChanged(double)),
-            this,                SLOT(on_profitMarginSpinBox_valueChanged(double)));
+            this,                SLOT(on_profitMarginSpinBox_valueChanged()));
     connect(priceSpinBox,   SIGNAL(valueChanged(double)),
-            this,           SLOT(on_priceSpinBox_valueChanged(double)));
+            this,           SLOT(on_priceSpinBox_valueChanged()));
     connect(roundingUpButton, SIGNAL(clicked()), this, SLOT(on_roundingUpButton_clicked()));
     connect(discountCheckBox, SIGNAL(toggled(bool)),
             this,             SLOT(on_discountCheckBox_toggled(bool)));
@@ -378,29 +379,33 @@ void ProductDetailsWidget::on_currentCategorySub1Change(int currentIndex)
 
 void ProductDetailsWidget::updateProfitMargin(double purchasePrice, double webshopPrice)
 {
-    if(purchasePriceSpinBox->value() == 0 || priceSpinBox->value() == 0) {
-        profitMarginSpinBox->setValue(0);
+    if(purchasePriceSpinBox->value() == 0) {
+        //profitMarginSpinBox->setValue(0);
+        return;
+    }
+    else if(priceSpinBox->value() == 0) {
+        priceSpinBox->setValue(purchasePrice * (profitMarginSpinBox->value()/100 + 1));
         return;
     }
 
     profitMarginSpinBox->setValue((webshopPrice / purchasePrice - 1) * 100);
 }
 
-void ProductDetailsWidget::on_purchasePriceSpinBox_valueChanged(double newPurchasePrice)
+void ProductDetailsWidget::on_purchasePriceSpinBox_valueChanged()
 {
-    updateProfitMargin(newPurchasePrice, priceSpinBox->value());
+    updateProfitMargin(purchasePriceSpinBox->value(), priceSpinBox->value());
 }
 
-void ProductDetailsWidget::on_profitMarginSpinBox_valueChanged(double newProfitMargin)
+void ProductDetailsWidget::on_profitMarginSpinBox_valueChanged()
 {
     if(purchasePriceSpinBox->value() == 0) return;
 
-    priceSpinBox->setValue(purchasePriceSpinBox->value() * (newProfitMargin/100 + 1));
+    priceSpinBox->setValue(purchasePriceSpinBox->value() * (profitMarginSpinBox->value()/100 + 1));
 }
 
-void ProductDetailsWidget::on_priceSpinBox_valueChanged(double newPrice)
+void ProductDetailsWidget::on_priceSpinBox_valueChanged()
 {
-    updateProfitMargin(purchasePriceSpinBox->value(), newPrice);
+    updateProfitMargin(purchasePriceSpinBox->value(), priceSpinBox->value());
 }
 
 

@@ -1034,18 +1034,38 @@ bool ItemNumberSearch::on_exportToPrintButton_clicked()
     return result;
 }
 
+void ItemNumberSearch::reconnectProfitMarginSignal()
+{
+    if(productDialog->purchasePriceSpinBox->value()) {
+        productDialog->disconnect(productDialog->profitMarginSpinBox, SIGNAL(editingFinished()),
+                                  this,              SLOT(reconnectProfitMarginSignal()));
+        productDialog->connect(productDialog->profitMarginSpinBox, SIGNAL(valueChanged(double)),
+                               productDialog,        SLOT(on_profitMarginSpinBox_valueChanged()));
+        connected = true;
+    }
+}
+
 void ItemNumberSearch::on_addButton_clicked()
 {   
     productDialog->setWindowTitle(trUtf8("BiSz - Új termék hozzáadása"));
     productDialog->okButton->setText(trUtf8("Hozzáadás"));
     productDialog->cancelButton->setText(trUtf8("Mégse"));
 
+ /*
+    // disconnecting certain signals
+    productDialog->disconnect(productDialog->profitMarginSpinBox, SIGNAL(valueChanged(double)),
+                              productDialog, SLOT(on_profitMarginSpinBox_valueChanged()));
+    productDialog->connect(productDialog->profitMarginSpinBox, SIGNAL(editingFinished()),
+                           this,                SLOT(reconnectProfitMarginSignal()));
+    connected = false;
+*/
+
+    // Setting up default product field values
     productDialog->productNameLineEdit->clear();
     productDialog->ownProductIdLineEdit->setText(generateNewProductId());
     productDialog->ownProductIdLineEdit->setDisabled(true);
     productDialog->foreignProductIdLineEdit->clear();
     //productDialog->purchasePriceSpinBox->clear();
-    productDialog->purchasePriceSpinBox->setValue(0);
     productDialog->descriptionTextEdit->clear();
 
     productDialog->categoryListModel.setStringList(myDatabase->categoryListLevel_0);
@@ -1058,6 +1078,9 @@ void ItemNumberSearch::on_addButton_clicked()
     //productDialog->weightSpinBox->clear();
     productDialog->weightSpinBox->setValue(0);
     //productDialog->priceSpinBox->clear();
+
+    productDialog->purchasePriceSpinBox->setValue(0);
+    productDialog->profitMarginSpinBox->setValue(70);
     productDialog->priceSpinBox->setValue(0);
     //productDialog->discountValueSpinBox->clear();
     productDialog->discountValueSpinBox->setValue(0);
@@ -1155,6 +1178,15 @@ void ItemNumberSearch::on_addButton_clicked()
             myModel->fetchMore();
         itemTableView->scrollToBottom();
 
+        /*
+        if(!connected) {
+            productDialog->disconnect(productDialog->profitMarginSpinBox, SIGNAL(editingFinished()),
+                                      this,              SLOT(reconnectProfitMarginSignal()));
+            productDialog->connect(productDialog->profitMarginSpinBox, SIGNAL(valueChanged(double)),
+                                   productDialog,        SLOT(on_profitMarginSpinBox_valueChanged()));
+        }
+        */
+
         updateProductCount();
         //myModel->select();
     }
@@ -1222,7 +1254,13 @@ void ItemNumberSearch::on_modifyButton_clicked()
 
     productDialog->discountValueSpinBox->setValue(currentRecordData.value(16).toInt());
     productDialog->discountCheckBox->setChecked(bool(currentRecordData.value(15).toInt()));
+
+//    emitting signals
+
     emit productDialog->discountCheckBox->toggled(productDialog->discountCheckBox->isChecked());
+    emit productDialog->purchasePriceSpinBox->editingFinished();
+
+//    Dialog exec
 
     if(productDialog->exec()) {
         QSqlTableModel model;

@@ -93,6 +93,7 @@ private:
     void updateCurrentRecordData();
     QSqlRecord createEmptyProductRecord();
     QMap<int, QString> currentRecordData;
+    bool connected;
 
     QString productPreviewFileName;
     ProductPreview bigProductPreview;
@@ -123,6 +124,8 @@ private slots:
     void on_productPreviewCheckBox_toggled(bool isChecked);
     void on_customerViewCheckBox_toggled(bool isChecked);
     void on_foreignProductIdEdited();
+
+    void reconnectProfitMarginSignal();
 };
 
 #endif // ITEMNUMBERSEARCH_H

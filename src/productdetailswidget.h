@@ -91,9 +91,9 @@ private slots:
     void on_currentCategoryChange(int currentIndex);
     void on_currentCategorySub1Change(int currentIndex);
     void on_discountCheckBox_toggled(bool isChecked);
-    void on_profitMarginSpinBox_valueChanged(double newProfitMargin);
-    void on_priceSpinBox_valueChanged(double newPrice);
-    void on_purchasePriceSpinBox_valueChanged(double newPurchasePrice);
+    void on_profitMarginSpinBox_valueChanged();
+    void on_priceSpinBox_valueChanged();
+    void on_purchasePriceSpinBox_valueChanged();
     void on_discountValueSpinBox_valueChanged(int newDiscountValue);
     void on_discountedPriceSpinBox_valueChanged(double newDiscountedPrice);
     void on_roundingUpButton_clicked();
