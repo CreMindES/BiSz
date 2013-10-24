@@ -983,6 +983,7 @@ bool ItemNumberSearch::on_exportToPrintButton_clicked()
     exportData.append(QChar( QChar::ByteOrderMark ));
 
     exportData.append("Cikkszám;");
+    exportData.append("Idegen cikkszám");
     exportData.append("Név;");
     exportData.append("Kategória;");
     exportData.append("Leírás;");
@@ -1001,6 +1002,8 @@ bool ItemNumberSearch::on_exportToPrintButton_clicked()
         double profit = price/purchase_price * 100 - 100;
 
         exportData.append(currentRecord.value("own_product_id").toString());
+        exportData.append(";");
+        exportData.append(currentRecord.value("foreign_product_id").toString());
         exportData.append(";");
         exportData.append(currentRecord.value("name").toString());
         exportData.append(";");
