@@ -27,6 +27,7 @@
 #include "databasemanager.h"
 #include "myqsfpmodel.h"
 #include "productdetailswidget.h"
+#include "optionsdialog.h"
 #include "productpreview.h"
 #include "clickableimage.h"
 
@@ -56,6 +57,7 @@ public:
     QPushButton *importButton;
     QPushButton *exportButton;
     QPushButton *exportToPrintButton;
+    QPushButton *optionsButton;
 
     ClickableImage *productPreviewImage;
 
@@ -79,6 +81,7 @@ public:
     QTableView *view;
 
     ProductDetailsWidget *productDialog;
+    OptionsDialog *optionsDialog;
 
     QStringList *categoryList;
 
@@ -95,12 +98,15 @@ private:
     QMap<int, QString> currentRecordData;
     bool connected;
 
+    QSettings *appSettings;
+
     QString productPreviewFileName;
     ProductPreview bigProductPreview;
 
     void updateSearchMatchCountLabel();
 
     void customFunction();
+
 
 private slots:
     void searchInDatabase();
@@ -119,6 +125,7 @@ private slots:
     void on_modifyButton_clicked();
     void on_deleteButton_clicked();
     bool on_exportToPrintButton_clicked();
+    void on_optionsButton_clicked();
     void on_productPreviewImage_clicked();
     void on_itemTableView_selectionModel_currentChanged();
     void on_productPreviewCheckBox_toggled(bool isChecked);

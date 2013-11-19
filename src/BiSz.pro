@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     productdetailswidget.cpp \
     databasemanager.cpp \
     productpreview.cpp \
-    clickableimage.cpp
+    clickableimage.cpp \
+    optionsdialog.cpp
 
 HEADERS  += mainwindow.h \
     myqsfpmodel.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     productdetailswidget.h \
     databasemanager.h \
     productpreview.h \
-    clickableimage.h
+    clickableimage.h \
+    optionsdialog.h
 
 FORMS    +=
 

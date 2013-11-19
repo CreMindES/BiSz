@@ -9,6 +9,10 @@
 ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     QWidget(parent)
 {
+    // Application settings
+    appSettings = new QSettings("DorogButor", "BiSz", this);
+
+    // UI
     searchButton = new QPushButton(trUtf8("Keresés"));
     importButton = new QPushButton("Import from CSV");
     exportButton = new QPushButton("Export to CSV");
@@ -16,6 +20,7 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     addButton = new QPushButton(trUtf8("Új termék"));
     modifyButton = new QPushButton(trUtf8("Módosítás"));
     deleteButton = new QPushButton(trUtf8("Törlés"));
+    optionsButton = new QPushButton(trUtf8("Beállítások"));
 
     productPreviewImage = new ClickableImage("", this);
 
@@ -25,6 +30,9 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     modifyButton->setMinimumWidth(150);
     deleteButton->setMaximumWidth(150);
     deleteButton->setMinimumWidth(150);
+
+    optionsButton->setMaximumWidth(130);
+    optionsButton->setMinimumWidth(130);
 
     exportToPrintButton->setMinimumWidth(130);
     exportToPrintButton->setMaximumWidth(130);
@@ -77,8 +85,11 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
 
     createView(proxyModel);
 
+    // Dialogs
     productDialog = new ProductDetailsWidget(this, myDatabase);
+    optionsDialog = new OptionsDialog(appSettings, this);
 
+    // Layouts
     mainLayout = new QHBoxLayout;
     searchLayout = new QHBoxLayout;
     browserLayout = new QVBoxLayout;
@@ -118,6 +129,8 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     menuLayout->addWidget(line);
 
     menuLayout->addSpacing(10);
+    menuLayout->addWidget(optionsButton, 0, Qt::AlignHCenter);
+    menuLayout->addSpacing(10);
     menuLayout->addWidget(exportButton);
     menuLayout->addWidget(importButton);
     menuLayout->addSpacing(20);
@@ -142,12 +155,15 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     connect(exactMatchCheckBox, SIGNAL(toggled(bool)), this, SLOT(searchInDatabase()));
     connect(exactMatchCheckBox, SIGNAL(stateChanged(int)), this, SLOT(exactMatchChecked()));
 
+    // Connect button SIGNALS and SLOTS
     connect(addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
     connect(modifyButton, SIGNAL(clicked()), this, SLOT(on_modifyButton_clicked()));
     connect(deleteButton, SIGNAL(clicked()), this, SLOT(on_deleteButton_clicked()));
     connect(importButton, SIGNAL(clicked()), this, SLOT(importCSV()));
     connect(exportButton, SIGNAL(clicked()), this, SLOT(exportCSV()));
     connect(exportToPrintButton, SIGNAL(clicked()), this, SLOT(on_exportToPrintButton_clicked()));
+    connect(optionsButton, SIGNAL(clicked()), this, SLOT(on_optionsButton_clicked()));
+
     connect(productPreviewImage, SIGNAL(clicked()),
             this,                SLOT(on_productPreviewImage_clicked()));
 
@@ -200,26 +216,30 @@ ItemNumberSearch::~ItemNumberSearch()
 
 void ItemNumberSearch::saveAppSettings()
 {
-    QSettings appSettings("DorogButor", "BiSz");
-
-    appSettings.beginGroup("checkbox");
-    appSettings.setValue("onlineSearch", onlineSearchCheckBox->isChecked());
-    appSettings.setValue("exactMatch", exactMatchCheckBox->isChecked());
-    appSettings.setValue("customerView", customerViewCheckBox->isChecked());
-    appSettings.setValue("productPreview", productPreviewCheckBox->isChecked());
-    appSettings.endGroup();
+    appSettings->beginGroup("checkbox");
+    appSettings->setValue("onlineSearchLastValue", onlineSearchCheckBox->isChecked());
+    appSettings->setValue("exactMatchLastValue", exactMatchCheckBox->isChecked());
+    appSettings->setValue("customerViewLastValue", customerViewCheckBox->isChecked());
+    appSettings->setValue("productPreviewLastValue", productPreviewCheckBox->isChecked());
+    appSettings->endGroup();
 }
 
 void ItemNumberSearch::loadAppSettings()
 {
-    QSettings appSettings("DorogButor", "BiSz");
+    appSettings->beginGroup("checkbox");
 
-    appSettings.beginGroup("checkbox");
-    onlineSearchCheckBox->setChecked(appSettings.value("onlineSearch", false).toBool());
-    exactMatchCheckBox->setChecked(appSettings.value("exactMatch", false).toBool());
-    customerViewCheckBox->setChecked(appSettings.value("customerView", false).toBool());
-    productPreviewCheckBox->setChecked(appSettings.value("productPreview", true ).toBool());
-    appSettings.endGroup();
+    appSettings->value("onlineSearchDefEnabled", false).toBool() ?
+        onlineSearchCheckBox->setChecked(appSettings->value("onlineSearchLastValue", false).toBool()) :
+        onlineSearchCheckBox->setChecked(appSettings->value("onlineSearchDefValue", false).toBool());
+    appSettings->value("exactMatchDefEnabled", false).toBool() ?
+        exactMatchCheckBox->setChecked(appSettings->value("exactMatchDefValue", false).toBool()) :
+        exactMatchCheckBox->setChecked(appSettings->value("exactMatchLastValue", false).toBool());
+    appSettings->value("customerViewDefEnabled", false).toBool() ?
+        customerViewCheckBox->setChecked(appSettings->value("customerViewDefValue", false).toBool()) :
+        customerViewCheckBox->setChecked(appSettings->value("customerViewLastValue", false).toBool());
+    productPreviewCheckBox->setChecked(appSettings->value("productPreviewLastValue", true ).toBool());
+
+    appSettings->endGroup();
 }
 
 void ItemNumberSearch::setupModel(QSqlRelationalTableModel *model)
@@ -970,6 +990,17 @@ bool ItemNumberSearch::exportCSV()
     file.close();
 
     return result;
+}
+
+void ItemNumberSearch::on_optionsButton_clicked()
+{
+    if(optionsDialog->exec()) {
+        optionsDialog->saveSettings(appSettings);
+        qDebug() << "beállítások mentve";
+    }
+    else {
+        qDebug() << "beállítások elvetve";
+    }
 }
 
 bool ItemNumberSearch::on_exportToPrintButton_clicked()
