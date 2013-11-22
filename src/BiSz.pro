@@ -6,6 +6,7 @@
 
 QT       += core gui sql
 contains(QT_VERSION, ^5\\..*\\..*): QT += widgets
+QT += qml quick
 
 
 TARGET = BiSz
@@ -40,3 +41,7 @@ RESOURCES += \
     resources.qrc
 
 win32:RC_FILE = BiSz.rc
+
+OTHER_FILES += \
+    menu.qml \
+    MyButton.qml

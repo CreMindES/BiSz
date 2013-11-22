@@ -9,6 +9,18 @@
 ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     QWidget(parent)
 {
+    // Setting up database and creating our model
+    myDatabase = new DatabaseManager;
+    myDatabase->openDB();
+
+    myModel = new QSqlRelationalTableModel;
+    proxyModel = new MyQSFPModel;
+    itemTableView = new QTableView;
+
+    setupModel(myModel);
+    proxyModel->setSourceModel(myModel);
+    createView(proxyModel);
+
     // Application settings
     appSettings = new QSettings("DorogButor", "BiSz", this);
 
@@ -71,20 +83,6 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     productCountLabel = new QLabel();
     searchMatchCountLabel = new QLabel();
 
-    itemTableView = new QTableView;
-
-    myDatabase = new DatabaseManager;
-    myDatabase->openDB();
-
-    myModel = new QSqlRelationalTableModel;
-    proxyModel = new MyQSFPModel;
-
-    setupModel(myModel);
-
-    proxyModel->setSourceModel(myModel);
-
-    createView(proxyModel);
-
     // Dialogs
     productDialog = new ProductDetailsWidget(this, myDatabase);
     optionsDialog = new OptionsDialog(appSettings, this);
@@ -120,6 +118,7 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     menuLayout->addWidget(modifyButton, 0, Qt::AlignHCenter);
     menuLayout->addWidget(deleteButton, 0, Qt::AlignHCenter);
     menuLayout->addStretch();
+/*  old print button + divider line
     menuLayout->addWidget(exportToPrintButton, 0, Qt::AlignHCenter);
     menuLayout->addSpacing(10);
 
@@ -127,12 +126,35 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     menuLayout->addWidget(line);
+*/
 
+/*  old Options Button
     menuLayout->addSpacing(10);
     menuLayout->addWidget(optionsButton, 0, Qt::AlignHCenter);
     menuLayout->addSpacing(10);
-    menuLayout->addWidget(exportButton);
-    menuLayout->addWidget(importButton);
+*/
+    QQuickView *qmlView = new QQuickView;
+    qmlView->setSource(QUrl::fromLocalFile("menu.qml"));
+    QWidget *container = QWidget::createWindowContainer(qmlView);
+    container->setMinimumSize(200, 180);
+    container->setMaximumSize(200, 180);
+
+    QObject *myObject = qmlView->rootObject();
+    QObject *myPrintButton = myObject->findChild<QObject*>("printButton");
+    QObject *myOptionsButton = myObject->findChild<QObject*>("optionsButton");
+    QObject *myExportCSVButton = myObject->findChild<QObject*>("exportCSVButton");
+    QObject *myImportCSVButton = myObject->findChild<QObject*>("importCSVButton");
+
+    connect(myPrintButton,     SIGNAL(clicked()), this, SLOT(on_exportToPrintButton_clicked()));
+    connect(myOptionsButton,   SIGNAL(clicked()), this, SLOT(on_optionsButton_clicked()));
+    connect(myExportCSVButton, SIGNAL(clicked()), this, SLOT(exportCSV()));
+    connect(myImportCSVButton, SIGNAL(clicked()), this, SLOT(importCSV()));
+
+    menuLayout->addSpacing(10);
+    menuLayout->addWidget(container);
+
+    //menuLayout->addWidget(exportButton);
+    //menuLayout->addWidget(importButton);
     menuLayout->addSpacing(20);
     menuLayout->addStretch();
     menuLayout->addWidget(productPreviewImage, 0, Qt::AlignVCenter | Qt::AlignHCenter);
@@ -189,8 +211,6 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
 
     itemTableView->selectRow(0);
 
-    updateProductCount();
-
     // demonstration
 /*
     QSqlQueryModel *typeComboModel = new QSqlQueryModel;
@@ -203,6 +223,8 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
         //qDebug() << id; //<< name;
     }
 */
+    updateProductCount();
+
     loadAppSettings();
 
     onOnlineSearchCheckBoxStateChanged();

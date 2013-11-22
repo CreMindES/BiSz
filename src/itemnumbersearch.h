@@ -24,6 +24,10 @@
 #include <QList>
 #include <qlineeditwithclearbutton.h>
 
+#include <QtQml/QQmlEngine>
+#include <QtQuick/QQuickView>
+#include <QQuickItem>
+
 #include "databasemanager.h"
 #include "myqsfpmodel.h"
 #include "productdetailswidget.h"
@@ -89,24 +93,22 @@ public:
     void importFPI();
 
 private:
+    // Members
     QLabel *productCountLabel;
     QLabel *searchMatchCountLabel;
-    int generateNewId();
-    QString generateNewProductId();
-    void updateCurrentRecordData();
-    QSqlRecord createEmptyProductRecord();
     QMap<int, QString> currentRecordData;
     bool connected;
-
     QSettings *appSettings;
-
     QString productPreviewFileName;
     ProductPreview bigProductPreview;
 
+    // Methods
+    QString generateNewProductId();
+    QSqlRecord createEmptyProductRecord();
+    int generateNewId();
+    void updateCurrentRecordData();
     void updateSearchMatchCountLabel();
-
     void customFunction();
-
 
 private slots:
     void searchInDatabase();

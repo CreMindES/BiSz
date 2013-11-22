@@ -5,5 +5,11 @@
         <file>images/logo.png</file>
         <file>images/clearSearchLineEdit.jpg</file>
         <file>images/error_icon.png</file>
+        <file>menu.qml</file>
+        <file>MyButton.qml</file>
+        <file>images/leftArrow2.png</file>
+        <file>images/rightArrow2.png</file>
+        <file>images/gear.png</file>
+        <file>images/print.png</file>
     </qresource>
 </RCC>
