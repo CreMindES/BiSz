@@ -19,7 +19,7 @@ void ProductPreview::showImage(QString filename)
             productPreview.setPixmap(myPixmap.scaled(500, 500, Qt::KeepAspectRatio,
                                                      Qt::SmoothTransformation));
             productPreview.setGeometry(0,0,500,500);
-            qDebug() << "scaling";
+            //qDebug() << "scaling";
         }
     }
 }

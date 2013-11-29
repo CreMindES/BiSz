@@ -34,7 +34,7 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     deleteButton = new QPushButton(trUtf8("Törlés"));
     optionsButton = new QPushButton(trUtf8("Beállítások"));
 
-    productPreviewImage = new ClickableImage("", this);
+    //productPreviewImage = new ClickableImage("", this);
 
     addButton->setMaximumWidth(150);
     addButton->setMinimumWidth(150);
@@ -111,54 +111,8 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     browserLayout->addWidget(itemTableView);
     browserLayout->addWidget(productCountLabel);
 
-    menuLayout->addSpacing(60);
-    menuLayout->addWidget(biszLogoLabel,0,Qt::AlignHCenter);
-    menuLayout->addSpacing(50);
-    menuLayout->addWidget(addButton, 0, Qt::AlignHCenter);
-    menuLayout->addWidget(modifyButton, 0, Qt::AlignHCenter);
-    menuLayout->addWidget(deleteButton, 0, Qt::AlignHCenter);
-    menuLayout->addStretch();
-/*  old print button + divider line
-    menuLayout->addWidget(exportToPrintButton, 0, Qt::AlignHCenter);
-    menuLayout->addSpacing(10);
-
-    QFrame* line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-    menuLayout->addWidget(line);
-*/
-
-/*  old Options Button
-    menuLayout->addSpacing(10);
-    menuLayout->addWidget(optionsButton, 0, Qt::AlignHCenter);
-    menuLayout->addSpacing(10);
-*/
-    QQuickView *qmlView = new QQuickView;
-    qmlView->setSource(QUrl::fromLocalFile("menu.qml"));
-    QWidget *container = QWidget::createWindowContainer(qmlView);
-    container->setMinimumSize(200, 180);
-    container->setMaximumSize(200, 180);
-
-    QObject *myObject = qmlView->rootObject();
-    QObject *myPrintButton = myObject->findChild<QObject*>("printButton");
-    QObject *myOptionsButton = myObject->findChild<QObject*>("optionsButton");
-    QObject *myExportCSVButton = myObject->findChild<QObject*>("exportCSVButton");
-    QObject *myImportCSVButton = myObject->findChild<QObject*>("importCSVButton");
-
-    connect(myPrintButton,     SIGNAL(clicked()), this, SLOT(on_exportToPrintButton_clicked()));
-    connect(myOptionsButton,   SIGNAL(clicked()), this, SLOT(on_optionsButton_clicked()));
-    connect(myExportCSVButton, SIGNAL(clicked()), this, SLOT(exportCSV()));
-    connect(myImportCSVButton, SIGNAL(clicked()), this, SLOT(importCSV()));
-
-    menuLayout->addSpacing(10);
-    menuLayout->addWidget(container);
-
-    //menuLayout->addWidget(exportButton);
-    //menuLayout->addWidget(importButton);
-    menuLayout->addSpacing(20);
-    menuLayout->addStretch();
-    menuLayout->addWidget(productPreviewImage, 0, Qt::AlignVCenter | Qt::AlignHCenter);
-    menuLayout->addSpacing(20);
+    createQmlMenuSidebar();
+    menuLayout->addWidget(qmlMenuSidebar);
     menuLayout->addStretch();
 
     mainLayout->addLayout(browserLayout);
@@ -176,18 +130,6 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
 
     connect(exactMatchCheckBox, SIGNAL(toggled(bool)), this, SLOT(searchInDatabase()));
     connect(exactMatchCheckBox, SIGNAL(stateChanged(int)), this, SLOT(exactMatchChecked()));
-
-    // Connect button SIGNALS and SLOTS
-    connect(addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
-    connect(modifyButton, SIGNAL(clicked()), this, SLOT(on_modifyButton_clicked()));
-    connect(deleteButton, SIGNAL(clicked()), this, SLOT(on_deleteButton_clicked()));
-    connect(importButton, SIGNAL(clicked()), this, SLOT(importCSV()));
-    connect(exportButton, SIGNAL(clicked()), this, SLOT(exportCSV()));
-    connect(exportToPrintButton, SIGNAL(clicked()), this, SLOT(on_exportToPrintButton_clicked()));
-    connect(optionsButton, SIGNAL(clicked()), this, SLOT(on_optionsButton_clicked()));
-
-    connect(productPreviewImage, SIGNAL(clicked()),
-            this,                SLOT(on_productPreviewImage_clicked()));
 
     connect(productPreviewCheckBox, SIGNAL(toggled(bool)),
             this,                   SLOT(on_productPreviewCheckBox_toggled(bool)));
@@ -235,7 +177,48 @@ ItemNumberSearch::~ItemNumberSearch()
 {
     saveAppSettings();
 }
+// UI
+void ItemNumberSearch::createQmlMenuSidebar()
+{
+    qmlMenuView = new QQuickView;
+//    qmlView->setSource(QUrl("qrc:/menu.qml"));
+    qmlMenuView->setSource(QUrl::fromLocalFile("../src/menu.qml"));
+//    QSurfaceFormat format;
+//    format.setSamples(16);
+//    qmlMenuView->setFormat(format);
+    qmlMenuSidebar = new QWidget;
+    qmlMenuSidebar = QWidget::createWindowContainer(qmlMenuView);
+    qmlMenuSidebar->setMinimumSize(qmlMenuView->size());
+//    qmlMenuSidebar->setMinimumSize(200, 500);
+//    qmlMenuSidebar->setMaximumSize(qmlMenuSidebar->minimumSize());
 
+    qmlMenuObject = qmlMenuView->rootObject();
+        qmlLogo = qmlMenuObject->findChild<QObject*>("biglogo");
+        qmlNewButton = qmlMenuObject->findChild<QObject*>("newButton");
+        qmlModifyButton = qmlMenuObject->findChild<QObject*>("modifyButton");
+        qmlDeleteButton = qmlMenuObject->findChild<QObject*>("deleteButton");
+        qmlPrintButton = qmlMenuObject->findChild<QObject*>("printButton");
+        qmlOptionsButton = qmlMenuObject->findChild<QObject*>("optionsButton");
+        qmlExportCSVButton = qmlMenuObject->findChild<QObject*>("exportCSVButton");
+        qmlImportCSVButton = qmlMenuObject->findChild<QObject*>("importCSVButton");
+        qmlProductThumbnail = qmlMenuObject->findChild<QObject*>("productThumbnailImage");
+
+
+    qmlModifyButton->setProperty("enabled", false);
+    qmlDeleteButton->setProperty("enabled", false);
+
+    connect(qmlLogo,             SIGNAL(clicked()), this, SLOT(showAboutDialog()));
+    connect(qmlNewButton,        SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
+    connect(qmlModifyButton,     SIGNAL(clicked()), this, SLOT(on_modifyButton_clicked()));
+    connect(qmlDeleteButton,     SIGNAL(clicked()), this, SLOT(on_deleteButton_clicked()));
+    connect(qmlPrintButton,      SIGNAL(clicked()), this, SLOT(on_exportToPrintButton_clicked()));
+    connect(qmlOptionsButton,    SIGNAL(clicked()), this, SLOT(on_optionsButton_clicked()));
+    connect(qmlExportCSVButton,  SIGNAL(clicked()), this, SLOT(exportCSV()));
+    connect(qmlImportCSVButton,  SIGNAL(clicked()), this, SLOT(importCSV()));
+    connect(qmlProductThumbnail, SIGNAL(clicked()), this, SLOT(on_productThumbnail_clicked()));
+}
+
+// App logic
 void ItemNumberSearch::saveAppSettings()
 {
     appSettings->beginGroup("checkbox");
@@ -1101,6 +1084,12 @@ void ItemNumberSearch::reconnectProfitMarginSignal()
     }
 }
 
+void ItemNumberSearch::showAboutDialog()
+{
+    //qDebug() << "about slot called";
+    qApp->aboutQt();
+}
+
 void ItemNumberSearch::on_addButton_clicked()
 {   
     productDialog->setWindowTitle(trUtf8("BiSz - Új termék hozzáadása"));
@@ -1473,61 +1462,66 @@ void ItemNumberSearch::on_deleteButton_clicked()
 
 void ItemNumberSearch::on_itemTableView_selectionModel_currentChanged()
 {
+    //qDebug() << "SLOT called: on_itemTableView_selectionModel_currentChanged";
     //modifyButton->setEnabled(!selection.isEmpty());
     int selectionCount = itemTableView->selectionModel()->selection().indexes().count();
     int columnCount = proxyModel->columnCount();
     if(selectionCount == 0) {
         modifyButton->setEnabled(false);
+        qmlModifyButton->setProperty("enabled", false);
     }
     else if(selectionCount/columnCount == 1) {
         modifyButton->setEnabled(true);
+        qmlModifyButton->setProperty("enabled", true);
     }
     else {
         modifyButton->setEnabled(false);
+        qmlModifyButton->setProperty("enabled", false);
     }
 
     if(selectionCount) {
         deleteButton->setEnabled(true);
+        qmlDeleteButton->setProperty("enabled", true);
     }
     else {
         deleteButton->setDisabled(true);
+        qmlDeleteButton->setProperty("enabled", false);
     }
 
-    if(productPreviewCheckBox->isChecked()) {
+    //if(productPreviewCheckBox->isChecked()) {
+    if(true) {
+        //qDebug() << "changing image";
         updateCurrentRecordData();
 
-        bool isFileNameValid = false;
-
-        QPixmap myPixmap;
+        QString qmlProductThumbnailPath;
 
         productPreviewFileName = QString(QDir::currentPath()).append("/images/products/").append(
                                    currentRecordData.value(2)).append(".jpg");
 
-        if(myPixmap.load(productPreviewFileName)) {
-            isFileNameValid = true;
+        if(QFile(productPreviewFileName).exists()) {
+             qmlProductThumbnailPath = QString("file:///").append(productPreviewFileName);
         }
         else {
             productPreviewFileName = QString(QDir::currentPath()).append("/images/products/").append(
                         currentRecordData.value(3)).toLower().append(".jpg");
-            if(myPixmap.load(productPreviewFileName)) {
-                isFileNameValid = true;
-            }
         }
-        if(isFileNameValid) {
-            productPreviewImage->setPixmap(myPixmap.scaled(QSize(170, 170),
-                                                           Qt::KeepAspectRatio, Qt::FastTransformation));
+
+        if(QFile(productPreviewFileName).exists()) {
+            qmlProductThumbnailPath = QString("file:///").append(productPreviewFileName);
+            qmlProductThumbnail->setProperty("source", qmlProductThumbnailPath);
+            qmlProductThumbnail->setProperty("visible", true);
         }
         else {
-            productPreviewImage->setText("Nem érhető el előnézet\nehhez a termékhez.");
-            productPreviewImage->setMinimumSize(172, 172);
+            qmlProductThumbnail->setProperty("visible", false);
         }
-        productPreviewImage->setEnabled(isFileNameValid);
-//        productPreviewImage->repaint();
+
         if(!bigProductPreview.isActiveWindow()) bigProductPreview.close();
     }
 }
 
-void ItemNumberSearch::on_productPreviewImage_clicked()
+
+//void ItemNumberSearch::on_productPreviewImage_clicked()
+void ItemNumberSearch::on_productThumbnail_clicked()
 {
     bigProductPreview.showImage(productPreviewFileName);
     bigProductPreview.open();
@@ -1541,10 +1535,14 @@ void ItemNumberSearch::updateProductCount()
 
 void ItemNumberSearch::on_productPreviewCheckBox_toggled(bool isChecked)
 {
+    qDebug() << "toogled:" << productPreviewCheckBox->isChecked();
     if(isChecked) {
         on_itemTableView_selectionModel_currentChanged();
+        qmlProductThumbnail->setProperty("visible", false);
     }
-    else productPreviewImage->setText(" ");
+    else {
+        qmlProductThumbnail->setProperty("visible", true);
+    }
 }
 
 void ItemNumberSearch::on_customerViewCheckBox_toggled(bool isChecked)

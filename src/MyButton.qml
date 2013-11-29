@@ -3,9 +3,11 @@ import QtQuick 2.1
 Rectangle {
     id: button
 
-    property string buttonText: "Push me"
+    property alias text: buttonText_text.text
+    //property string buttonText: "Push me"
     property string buttonIcon
     property color  buttonColor: "#2e79b7"
+    property bool   buttonHovered: false
 
     signal clicked()
 
@@ -18,21 +20,29 @@ Rectangle {
     anchors.topMargin: 5
     anchors.bottomMargin: 5
 
-    MouseArea {id: mouseArea; anchors.fill: parent; onClicked: button.clicked(); hoverEnabled: true}
+    MouseArea {
+        id: mouseArea;
+        anchors.fill: parent;
+        onClicked: button.clicked();
+        hoverEnabled: true
+        onContainsMouseChanged: {
+            buttonHovered = !buttonHovered
+        }
+    }
 
     Rectangle {
         id: buttonIconContainer
         height: parent.height
         width: 30
         color: "#ffffff"
-        radius: parent.radius
+        radius: parent.radius - 1
         z: 1
 
         Rectangle {
             id: buttonDivider
             height: parent.height
             width: parent.radius
-            x: buttonIconContainer.width-button.radius
+            x: buttonIconContainer.width-button.radius+1
             color: buttonIconContainer.color
             z: 3
         }
@@ -53,9 +63,11 @@ Rectangle {
 
             width: 21
             height: 21
+            sourceSize.width: 21
+            sourceSize.height: 21
 
-            smooth: true
             opacity: 0.8
+            smooth: true
             antialiasing: true
 
             anchors.centerIn: parent
@@ -83,7 +95,7 @@ Rectangle {
     Text {
         id: buttonText_text
 
-        text: buttonText
+        text: "Push Me"
 
         color: "#ffffff"
         font.pointSize: 10
@@ -106,7 +118,19 @@ Rectangle {
            PropertyChanges { target: button; color: "#368bd1" }
            PropertyChanges { target: buttonTextContainer; color: "#368bd1" }
            PropertyChanges { target: buttonIconImage; opacity: 1 }
+        },
+
+        State {
+            name: "disabled"; when: !enabled
+            PropertyChanges { target: button; color: "#dce6e6" }
+            PropertyChanges { target: buttonIconContainer; color: "#dce6e6" }
+            PropertyChanges { target: buttonIconImage; opacity: 0.25 }
+            PropertyChanges { target: buttonDividerLine; color: "#dce6e6" }
+            PropertyChanges { target: buttonDivider; color: "#dce6e6" }
+            PropertyChanges { target: buttonTextContainer; color: "#dce6e6" }
+            PropertyChanges { target: buttonText_text; color: "#7e7979" }
         }
+
     ]
 
     transitions: Transition {

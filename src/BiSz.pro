@@ -44,4 +44,5 @@ win32:RC_FILE = BiSz.rc
 
 OTHER_FILES += \
     menu.qml \
-    MyButton.qml
+    MyButton.qml \
+    about.qml

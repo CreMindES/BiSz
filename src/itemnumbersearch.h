@@ -43,6 +43,9 @@ public:
     ItemNumberSearch(QWidget *parent = 0);
     ~ItemNumberSearch();
 
+    QQuickView *qmlMenuView;
+    QWidget *qmlMenuSidebar;
+
     DatabaseManager *myDatabase;
 
     QTableView* createView(QSortFilterProxyModel *model);
@@ -55,15 +58,20 @@ public:
     QPixmap biszLogoPixmap;
     QLabel *biszLogoLabel;
 
-    QPushButton *addButton;
-    QPushButton *modifyButton;
-    QPushButton *deleteButton;
-    QPushButton *importButton;
-    QPushButton *exportButton;
-    QPushButton *exportToPrintButton;
-    QPushButton *optionsButton;
+    // QML
 
-    ClickableImage *productPreviewImage;
+    QObject *qmlMenuObject;
+    QObject *qmlLogo;
+    QObject *qmlNewButton;
+    QObject *qmlModifyButton;
+    QObject *qmlDeleteButton;
+    QObject *qmlPrintButton;
+    QObject *qmlOptionsButton;
+    QObject *qmlExportCSVButton;
+    QObject *qmlImportCSVButton;
+    QObject *qmlProductThumbnail;
+
+    //ClickableImage *productPreviewImage;
 
     QCheckBox *onlineSearchCheckBox;
     QCheckBox *exactMatchCheckBox;
@@ -103,6 +111,8 @@ private:
     ProductPreview bigProductPreview;
 
     // Methods
+    void createQmlMenuSidebar();
+
     QString generateNewProductId();
     QSqlRecord createEmptyProductRecord();
     int generateNewId();
@@ -123,12 +133,15 @@ private slots:
 
     void onOnlineSearchCheckBoxStateChanged();
     void exactMatchChecked();
+
+    void showAboutDialog();
     void on_addButton_clicked();
     void on_modifyButton_clicked();
     void on_deleteButton_clicked();
     bool on_exportToPrintButton_clicked();
     void on_optionsButton_clicked();
-    void on_productPreviewImage_clicked();
+    //void on_productPreviewImage_clicked();
+    void on_productThumbnail_clicked();
     void on_itemTableView_selectionModel_currentChanged();
     void on_productPreviewCheckBox_toggled(bool isChecked);
     void on_customerViewCheckBox_toggled(bool isChecked);
