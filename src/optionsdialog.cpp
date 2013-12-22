@@ -20,6 +20,9 @@ void OptionsDialog::createOptionsUI()
     defaultValueGroupBox   = new QGroupBox;
     defaultValueVBoxLayout = new QVBoxLayout;
 
+    reducedControlGroupBox = new QGroupBox;
+    reducedControlLayout = new QVBoxLayout;
+
     optionsLayout = new QHBoxLayout;
     mainLayout    = new QVBoxLayout;
 
@@ -32,6 +35,8 @@ void OptionsDialog::createOptionsUI()
 
     exactMatchHasDefaultValueCheckBox = new QCheckBox(tr("Teljes egyezés"), this);
     exactMatchCheckBox = new QCheckBox(tr("Teljes egyezés"), this);
+
+    reducedControlCheckBox = new QCheckBox(tr("Csökkentett funkciók"), this);
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Mentés"));
@@ -46,16 +51,22 @@ void OptionsDialog::createOptionsUI()
     defaultValueVBoxLayout->addWidget(onlineSearchCheckBox);
     defaultValueVBoxLayout->addWidget(exactMatchCheckBox);
 
+    reducedControlLayout->addWidget(reducedControlCheckBox);
+
     hasDefaultValueGroupBox->setTitle(tr("Alapértelmezett beállítás engedélyezése"));
     hasDefaultValueGroupBox->setLayout(hasDefaultValueVBoxLayout);
 
     defaultValueGroupBox->setTitle(tr("Alapértelmezett beállítás"));
     defaultValueGroupBox->setLayout(defaultValueVBoxLayout);
 
+    reducedControlGroupBox->setTitle("Csökkentett funkciók");
+    reducedControlGroupBox->setLayout(reducedControlLayout);
+
     optionsLayout->addWidget(hasDefaultValueGroupBox);
     optionsLayout->addWidget(defaultValueGroupBox);
 
     mainLayout->addLayout(optionsLayout);
+    mainLayout->addWidget(reducedControlGroupBox);
     mainLayout->addWidget(buttonBox);
 
     this->setLayout(mainLayout);
@@ -86,6 +97,8 @@ void OptionsDialog::saveSettings(QSettings *appSettings)
     appSettings->setValue("exactMatchDefValue", exactMatchCheckBox->isChecked());
     appSettings->setValue("customerViewDefValue", customerViewCheckBox->isChecked());
 
+    appSettings->setValue("reducedFunctions", reducedControlCheckBox->isChecked());
+
     appSettings->endGroup();
 }
 
@@ -104,12 +117,14 @@ void OptionsDialog::loadSettings(QSettings *appSettings)
     exactMatchCheckBox->setChecked(appSettings->value("exactMatchDefValue", false).toBool());
     customerViewCheckBox->setChecked(appSettings->value("customerViewDefValue", false).toBool());
 
+    reducedControlCheckBox->setChecked(appSettings->value("reducedFunctions", false).toBool());
+
     appSettings->endGroup();
 }
 
 void OptionsDialog::on_defaultEnabledValueChange()
 {
-    qDebug() << "changed";
+    //qDebug() << "changed";
     customerViewCheckBox->setEnabled(customerViewHasDefaultValueCheckBox->isChecked());
     onlineSearchCheckBox->setEnabled(onlineSearchHasDefaultValueCheckBox->isChecked());
     exactMatchCheckBox->setEnabled(exactMatchHasDefaultValueCheckBox->isChecked());

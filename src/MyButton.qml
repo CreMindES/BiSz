@@ -5,7 +5,7 @@ Rectangle {
 
     property alias text: buttonText_text.text
     //property string buttonText: "Push me"
-    property string buttonIcon
+    property url buttonIcon
     property color  buttonColor: "#2e79b7"
     property bool   buttonHovered: false
 

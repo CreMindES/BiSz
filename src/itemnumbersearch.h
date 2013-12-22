@@ -55,9 +55,6 @@ public:
 
     QPushButton *searchButton;
 
-    QPixmap biszLogoPixmap;
-    QLabel *biszLogoLabel;
-
     // QML
 
     QObject *qmlMenuObject;
@@ -133,6 +130,7 @@ private slots:
 
     void onOnlineSearchCheckBoxStateChanged();
     void exactMatchChecked();
+    void enableReducedFunctions(bool doEnable);
 
     void showAboutDialog();
     void on_addButton_clicked();
@@ -140,7 +138,6 @@ private slots:
     void on_deleteButton_clicked();
     bool on_exportToPrintButton_clicked();
     void on_optionsButton_clicked();
-    //void on_productPreviewImage_clicked();
     void on_productThumbnail_clicked();
     void on_itemTableView_selectionModel_currentChanged();
     void on_productPreviewCheckBox_toggled(bool isChecked);

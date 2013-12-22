@@ -24,43 +24,9 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     // Application settings
     appSettings = new QSettings("DorogButor", "BiSz", this);
 
+
     // UI
     searchButton = new QPushButton(trUtf8("Keresés"));
-    importButton = new QPushButton("Import from CSV");
-    exportButton = new QPushButton("Export to CSV");
-    exportToPrintButton = new QPushButton("Nyomtatás");
-    addButton = new QPushButton(trUtf8("Új termék"));
-    modifyButton = new QPushButton(trUtf8("Módosítás"));
-    deleteButton = new QPushButton(trUtf8("Törlés"));
-    optionsButton = new QPushButton(trUtf8("Beállítások"));
-
-    //productPreviewImage = new ClickableImage("", this);
-
-    addButton->setMaximumWidth(150);
-    addButton->setMinimumWidth(150);
-    modifyButton->setMaximumWidth(150);
-    modifyButton->setMinimumWidth(150);
-    deleteButton->setMaximumWidth(150);
-    deleteButton->setMinimumWidth(150);
-
-    optionsButton->setMaximumWidth(130);
-    optionsButton->setMinimumWidth(130);
-
-    exportToPrintButton->setMinimumWidth(130);
-    exportToPrintButton->setMaximumWidth(130);
-
-    modifyButton->setEnabled(false);
-    deleteButton->setEnabled(false);
-
-    //biszLogoPixmap = new QPixmap(":/images/logo.png");
-    if (!biszLogoPixmap.load( ":/images/logo.png" )) {
-        qWarning("Failed to load images/logo.png");
-    }
-
-    biszLogoLabel = new QLabel();
-    biszLogoLabel->setPixmap(biszLogoPixmap.scaled(QSize(145, 145), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-    //biszLogoLabel->setFixedSize(50, 50);
 
     onlineSearchCheckBox = new QCheckBox(trUtf8("Azonnali keresés"));
     exactMatchCheckBox = new QCheckBox(trUtf8("Teljes egyezés"));
@@ -93,7 +59,6 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     browserLayout = new QVBoxLayout;
     menuLayout = new QVBoxLayout;
 
-    //QLabel *text = new QLabel("hello");
     searchLayout->addWidget(searchIconLabel);
     searchLayout->addWidget(searchField);
     searchLayout->addWidget(searchButton);
@@ -141,6 +106,9 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
             this, SLOT(on_itemTableView_selectionModel_currentChanged()));
     connect(productDialog->foreignProductIdLineEdit, SIGNAL(editingFinished()),
             this                                   , SLOT(on_foreignProductIdEdited()));
+
+    connect(optionsDialog->reducedControlCheckBox, SIGNAL(toggled(bool)),
+            this,                                  SLOT(enableReducedFunctions(bool)));
 
     onlineSearchCheckBox->setChecked(false);
     exactMatchCheckBox->setChecked(false);
@@ -218,6 +186,24 @@ void ItemNumberSearch::createQmlMenuSidebar()
     connect(qmlProductThumbnail, SIGNAL(clicked()), this, SLOT(on_productThumbnail_clicked()));
 }
 
+void ItemNumberSearch::enableReducedFunctions(bool doEnable)
+{
+    bool state;
+
+    if(doEnable) {
+        state = false;
+    }
+    else {
+        state = true;
+    }
+
+    qmlNewButton->setProperty("enabled", state);
+    qmlModifyButton->setProperty("enabled", state);
+    qmlDeleteButton->setProperty("enabled", state);
+    qmlExportCSVButton->setProperty("enabled", state);
+    qmlImportCSVButton->setProperty("enabled", state);
+}
+
 // App logic
 void ItemNumberSearch::saveAppSettings()
 {
@@ -245,6 +231,8 @@ void ItemNumberSearch::loadAppSettings()
     productPreviewCheckBox->setChecked(appSettings->value("productPreviewLastValue", true ).toBool());
 
     appSettings->endGroup();
+
+    if(optionsDialog->reducedControlCheckBox->isChecked()) enableReducedFunctions(true);
 }
 
 void ItemNumberSearch::setupModel(QSqlRelationalTableModel *model)
@@ -1464,28 +1452,26 @@ void ItemNumberSearch::on_itemTableView_selectionModel_currentChanged()
 {
     //qDebug() << "SLOT called: on_itemTableView_selectionModel_currentChanged";
     //modifyButton->setEnabled(!selection.isEmpty());
+
     int selectionCount = itemTableView->selectionModel()->selection().indexes().count();
     int columnCount = proxyModel->columnCount();
-    if(selectionCount == 0) {
-        modifyButton->setEnabled(false);
-        qmlModifyButton->setProperty("enabled", false);
-    }
-    else if(selectionCount/columnCount == 1) {
-        modifyButton->setEnabled(true);
-        qmlModifyButton->setProperty("enabled", true);
-    }
-    else {
-        modifyButton->setEnabled(false);
-        qmlModifyButton->setProperty("enabled", false);
-    }
+    if(!optionsDialog->reducedControlCheckBox->isChecked()) {
+        if(selectionCount == 0) {
+            qmlModifyButton->setProperty("enabled", false);
+        }
+        else if(selectionCount/columnCount == 1) {
+            qmlModifyButton->setProperty("enabled", true);
+        }
+        else {
+            qmlModifyButton->setProperty("enabled", false);
+        }
 
-    if(selectionCount) {
-        deleteButton->setEnabled(true);
-        qmlDeleteButton->setProperty("enabled", true);
-    }
-    else {
-        deleteButton->setDisabled(true);
-        qmlDeleteButton->setProperty("enabled", false);
+        if(selectionCount) {
+            qmlDeleteButton->setProperty("enabled", true);
+        }
+        else {
+            qmlDeleteButton->setProperty("enabled", false);
+        }
     }
 
     //if(productPreviewCheckBox->isChecked()) {

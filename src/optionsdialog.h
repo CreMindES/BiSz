@@ -23,14 +23,19 @@ public:
     void saveSettings(QSettings *appSettings);
     void loadSettings(QSettings *appSettings);
 
+    // TODO: create getter and put back to private
+    QCheckBox *reducedControlCheckBox;
+
 private:
     // Layout
     QGroupBox *defaultValueGroupBox;
     QGroupBox *hasDefaultValueGroupBox;
+    QGroupBox *reducedControlGroupBox;
     QVBoxLayout *hasDefaultValueVBoxLayout;
     QVBoxLayout *defaultValueVBoxLayout;
     QHBoxLayout *optionsLayout;
     QVBoxLayout *mainLayout;
+    QVBoxLayout *reducedControlLayout;
 
     // UI elements
     QCheckBox *customerViewHasDefaultValueCheckBox;

@@ -8,7 +8,7 @@ Rectangle {
     objectName: "qmlMenu"
 
     property alias productPreviewImage: imageProductThumbnail
-    property string productThumbnailPath
+    property url productThumbnailPath
 
     SystemPalette { id: myPalette; colorGroup: SystemPalette.Active }
 
@@ -192,7 +192,6 @@ Rectangle {
                 signal clicked()
                 z: 1
 
-                //sourceChanged transition
                 //onSourceChanged: console.log(productThumbnailPath)
                 source: productThumbnailPath
 
@@ -204,6 +203,16 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 antialiasing: true
+
+                /* animation test
+                onSourceChanged: {
+                    opacity = 0
+                }
+
+                Behavior on opacity {
+                    NumberAnimation { target: imageProductThumbnail; property: "opacity"; from: 0; to: 1; duration: 500 }
+                }
+                */
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
