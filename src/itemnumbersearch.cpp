@@ -149,7 +149,7 @@ ItemNumberSearch::~ItemNumberSearch()
 void ItemNumberSearch::createQmlMenuSidebar()
 {
     qmlMenuView = new QQuickView;
-//    qmlView->setSource(QUrl("qrc:/menu.qml"));
+//    qmlMenuView->setSource(QUrl("qrc:/menu.qml"));
     qmlMenuView->setSource(QUrl::fromLocalFile("../src/menu.qml"));
 //    QSurfaceFormat format;
 //    format.setSamples(16);
