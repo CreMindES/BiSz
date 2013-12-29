@@ -12,6 +12,8 @@ QT += qml quick
 TARGET = BiSz
 TEMPLATE = app
 
+#CONFIG += console
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \

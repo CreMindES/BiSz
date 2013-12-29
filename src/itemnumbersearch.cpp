@@ -1483,14 +1483,15 @@ void ItemNumberSearch::on_itemTableView_selectionModel_currentChanged()
 
         productPreviewFileName = QString(QDir::currentPath()).append("/images/products/").append(
                                    currentRecordData.value(2)).append(".jpg");
-
-        if(QFile(productPreviewFileName).exists()) {
-             qmlProductThumbnailPath = QString("file:///").append(productPreviewFileName);
-        }
-        else {
+        if(!QFile(productPreviewFileName).exists())
+        {
+            // gyűjtőcsoport
+//            productPreviewFileName = QString(QDir::currentPath()).append("/images/products/").append(
+//                        currentRecordData.value(3)).toLower().append(".jpg");
             productPreviewFileName = QString(QDir::currentPath()).append("/images/products/").append(
-                        currentRecordData.value(3)).toLower().append(".jpg");
+                        "facsavarok").append(".jpg");
         }
+//        qDebug() << "Product thumbnail path: " << productPreviewFileName;
 
         if(QFile(productPreviewFileName).exists()) {
             qmlProductThumbnailPath = QString("file:///").append(productPreviewFileName);
