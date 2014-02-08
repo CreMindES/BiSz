@@ -138,7 +138,8 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
     loadAppSettings();
 
     onOnlineSearchCheckBoxStateChanged();
-    //customFunction();
+
+//    customFunction();
 }
 
 ItemNumberSearch::~ItemNumberSearch()
@@ -261,6 +262,7 @@ void ItemNumberSearch::setupModel(QSqlRelationalTableModel *model)
     model->setHeaderData(15, Qt::Horizontal, QObject::trUtf8("Akció"));
     model->setHeaderData(16, Qt::Horizontal, QObject::trUtf8("Akció mértéke"));
     model->setHeaderData(17, Qt::Horizontal, QObject::trUtf8("WebX5 id"));
+//    model->setHeaderData(18, Qt::Horizontal, QObject::trUtf8("Nettó ár"));
 
     //model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->setEditStrategy(QSqlTableModel::OnFieldChange);
@@ -549,8 +551,16 @@ bool ItemNumberSearch::importCSV()
 
 
     while (!in.atEnd()) {
+//    for(int i=0; i<1050; ++i)
+//    int l = 0;
+//    while(l < 3) {
         QHash<QString, QString> productHash;
         int categoryNumber;
+
+//        for(int i=1; i<1053; ++i) {
+//            in.readLine();
+//        }
+//        l++;
 
         QString line = in.readLine().toUtf8();
         if(line.trimmed().isEmpty()) continue;
@@ -686,9 +696,8 @@ bool ItemNumberSearch::importCSV()
                     if(oldCategory == newCategory) continue;
                     else {
                         hasRecordChanged = true;
-                        QSqlField currentField = QSqlField(fieldName, QVariant::Int);
-                        existingProductRecord.replace(existingProductRecord.indexOf(
-                                                      myDatabase->csvImportFieldList.at(field)), currentField);
+                        existingProductRecord.setValue("category", productHash.value("category_number"));
+
                         continue;
                     }
                 }
@@ -941,7 +950,9 @@ bool ItemNumberSearch::exportCSV()
         exportData.append(";");
         exportData.append(currentRecord.value("vat_value").toString());
         exportData.append(";");
-        exportData.append(currentRecord.value("weight").toString());
+        //weight field: replaced to price as requested
+//        exportData.append(currentRecord.value("weight").toString());
+        exportData.append(currentRecord.value("price").toString().replace(".",","));
         exportData.append(";");
         exportData.append(currentRecord.value("options").toString());
         exportData.append(";");
@@ -1613,13 +1624,18 @@ void ItemNumberSearch::customFunction()
         //currentRecord.setValue("price", currentRecord.value("price").toString().replace(',', '.'));
         //currentRecord.setValue("purchase_price", currentRecord.value("purchase_price").toString().replace(',', '.'));
 
+
         if(currentRecord.value("name").toString().contains("fogantyú csavar",Qt::CaseInsensitive) ||
            currentRecord.value("name").toString().contains("facsavar",Qt::CaseInsensitive)) {
             continue;
         }
         else {
-            int newPrice = round(currentRecord.value("price").toDouble());
-            currentRecord.setValue("price", newPrice);
+            double currentPrice = currentRecord.value("price").toDouble();
+
+            if(currentPrice > 15) {
+                int newPrice = round(currentPrice);
+                currentRecord.setValue("price", newPrice);
+            }
         }
 
         myModel->setRecord(i, currentRecord);
