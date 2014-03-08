@@ -31,11 +31,13 @@ private:
     QGroupBox *defaultValueGroupBox;
     QGroupBox *hasDefaultValueGroupBox;
     QGroupBox *reducedControlGroupBox;
+    QGroupBox *accountingGroupBox;
     QVBoxLayout *hasDefaultValueVBoxLayout;
     QVBoxLayout *defaultValueVBoxLayout;
     QHBoxLayout *optionsLayout;
     QVBoxLayout *mainLayout;
     QVBoxLayout *reducedControlLayout;
+    QVBoxLayout *accountingLayout;
 
     // UI elements
     QCheckBox *customerViewHasDefaultValueCheckBox;
@@ -47,12 +49,18 @@ private:
     QCheckBox *exactMatchHasDefaultValueCheckBox;
     QCheckBox *exactMatchCheckBox;
 
+    QPushButton *exportToAccountingButton;
+
     QDialogButtonBox *buttonBox;
 
     void createOptionsUI();
 
+signals:
+    void exportToAccountingButton_clicked();
+
 private slots:
     void on_defaultEnabledValueChange();
+    void on_exportToAccountingButton_clicked();
 };
 
 #endif // OPTIONSDIALOG_H

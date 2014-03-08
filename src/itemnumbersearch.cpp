@@ -109,6 +109,8 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
 
     connect(optionsDialog->reducedControlCheckBox, SIGNAL(toggled(bool)),
             this,                                  SLOT(enableReducedFunctions(bool)));
+    connect(optionsDialog, SIGNAL(exportToAccountingButton_clicked()),
+            this,          SLOT(exportToAccountingApp()));
 
     onlineSearchCheckBox->setChecked(false);
     exactMatchCheckBox->setChecked(false);
@@ -995,6 +997,49 @@ bool ItemNumberSearch::exportCSV()
 
     return result;
 }
+
+bool ItemNumberSearch::exportToAccountingApp()
+{
+    bool result = false;
+
+    QString csvExportFileName = QFileDialog::getSaveFileName(this, trUtf8("CSV mentése"),
+                                                           "", trUtf8("Fájlok (*.csv)"));
+    QString exportData;
+
+    exportData.append(QChar( QChar::ByteOrderMark ));
+
+    exportData.append("Cikkszám;Termék-Leírás;Ár\n");
+
+    for(int i=0; i<myModel->rowCount(); ++i) {
+        QSqlRecord currentRecord = myModel->record(i);
+
+        exportData.append(currentRecord.value("own_product_id").toString());
+        exportData.append(";");
+        exportData.append(currentRecord.value("name").toString());
+        exportData.append(" - \"");
+        exportData.append(currentRecord.value("description").toString().replace("\n- ", ", ").replace(
+                              "- ", "").replace('\n', " "));
+        exportData.append("\"");
+        exportData.append(";");
+        exportData.append(currentRecord.value("price").toString().replace(" Ft", "").replace(".",","));
+        exportData.append('\n');
+    }
+
+    QFile file;
+    file.setFileName(csvExportFileName);
+    if(file.exists()) file.remove();
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+
+    QByteArray exportByteArray;
+    exportByteArray.append(exportData.toUtf8());
+    result = file.write(exportByteArray);
+
+    file.flush();
+    file.close();
+
+    return result;
+}
+
 
 void ItemNumberSearch::on_optionsButton_clicked()
 {

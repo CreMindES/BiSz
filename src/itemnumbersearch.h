@@ -145,6 +145,7 @@ private slots:
     void on_foreignProductIdEdited();
 
     void reconnectProfitMarginSignal();
+    bool exportToAccountingApp();
 };
 
 #endif // ITEMNUMBERSEARCH_H

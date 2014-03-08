@@ -23,6 +23,9 @@ void OptionsDialog::createOptionsUI()
     reducedControlGroupBox = new QGroupBox;
     reducedControlLayout = new QVBoxLayout;
 
+    accountingGroupBox = new QGroupBox;
+    accountingLayout = new QVBoxLayout;
+
     optionsLayout = new QHBoxLayout;
     mainLayout    = new QVBoxLayout;
 
@@ -37,6 +40,9 @@ void OptionsDialog::createOptionsUI()
     exactMatchCheckBox = new QCheckBox(tr("Teljes egyezés"), this);
 
     reducedControlCheckBox = new QCheckBox(tr("Csökkentett funkciók"), this);
+
+    exportToAccountingButton = new QPushButton(tr("Exportálás a számlázó programhoz"));
+//    exportToAccountingButton->setMaximumSize(exportToAccountingButton->sizeHint());
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Mentés"));
@@ -53,20 +59,29 @@ void OptionsDialog::createOptionsUI()
 
     reducedControlLayout->addWidget(reducedControlCheckBox);
 
+    accountingLayout->addWidget(exportToAccountingButton);
+//    accountingLayout->setAlignment(exportToAccountingButton, Qt::AlignHCenter);
+
+    // Setting up UI GroupBoxes
     hasDefaultValueGroupBox->setTitle(tr("Alapértelmezett beállítás engedélyezése"));
     hasDefaultValueGroupBox->setLayout(hasDefaultValueVBoxLayout);
 
     defaultValueGroupBox->setTitle(tr("Alapértelmezett beállítás"));
     defaultValueGroupBox->setLayout(defaultValueVBoxLayout);
 
-    reducedControlGroupBox->setTitle("Csökkentett funkciók");
+    reducedControlGroupBox->setTitle(tr("Csökkentett funkciók"));
     reducedControlGroupBox->setLayout(reducedControlLayout);
+
+    accountingGroupBox->setTitle(tr("Könyvelőprogram"));
+    accountingGroupBox->setLayout(accountingLayout);
 
     optionsLayout->addWidget(hasDefaultValueGroupBox);
     optionsLayout->addWidget(defaultValueGroupBox);
 
+    // Assembling final layout from sublayouts
     mainLayout->addLayout(optionsLayout);
     mainLayout->addWidget(reducedControlGroupBox);
+    mainLayout->addWidget(accountingGroupBox);
     mainLayout->addWidget(buttonBox);
 
     this->setLayout(mainLayout);
@@ -83,6 +98,8 @@ void OptionsDialog::createOptionsUI()
             this, SLOT(on_defaultEnabledValueChange()));
     connect(exactMatchHasDefaultValueCheckBox,   SIGNAL(toggled(bool)),
             this, SLOT(on_defaultEnabledValueChange()));
+    connect(exportToAccountingButton,            SIGNAL(clicked()),
+            this, SLOT(on_exportToAccountingButton_clicked()));
 }
 
 void OptionsDialog::saveSettings(QSettings *appSettings)
@@ -128,4 +145,9 @@ void OptionsDialog::on_defaultEnabledValueChange()
     customerViewCheckBox->setEnabled(customerViewHasDefaultValueCheckBox->isChecked());
     onlineSearchCheckBox->setEnabled(onlineSearchHasDefaultValueCheckBox->isChecked());
     exactMatchCheckBox->setEnabled(exactMatchHasDefaultValueCheckBox->isChecked());
+}
+
+void OptionsDialog::on_exportToAccountingButton_clicked()
+{
+    emit exportToAccountingButton_clicked();
 }
