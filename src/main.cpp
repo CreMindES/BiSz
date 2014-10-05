@@ -1,24 +1,24 @@
-#include <QApplication>
-
-#include "mainwindow.h"
-#include "create_connection.h"
+#include <QGuiApplication>
+#include <QQuickView>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QGuiApplication app(argc, argv);
 
-    a.setApplicationName("BiSz - Bútoripari Szerevények webáruház adatbázis");
-    a.setApplicationVersion("0.4.0");
+    // BiSz application
+    app.setApplicationName("BiSz - Bútoripari Szerevények webáruház adatbázis");
+    app.setApplicationVersion("0.5.0");
+
+    // BiSz engine
+//    BiSz ourBiSz;
+
+    // BiSz interface
+    QQuickView BiSzInterface;
+
     QPixmap appIconPixmap(":/images/BiSzIcon.ico");
-    //appIconPixmap = appIconPixmap.scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    a.setWindowIcon(QIcon(appIconPixmap));
-
-    //if (!createConnection()) return 1;
-
-    MainWindow w;
-    w.showMaximized();
-    //w.show();
+    BiSzInterface.setIcon( QIcon(appIconPixmap) );
+    BiSzInterface.setSource( QUrl::fromLocalFile("../src/main.qml") );
+    BiSzInterface.show();
     
-    return a.exec();
+    return app.exec();
 }

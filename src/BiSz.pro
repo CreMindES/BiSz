@@ -16,7 +16,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     myqsfpmodel.cpp \
     itemnumbersearch.cpp \
     qlineeditwithclearbutton.cpp \
@@ -26,7 +25,7 @@ SOURCES += main.cpp\
     clickableimage.cpp \
     optionsdialog.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     myqsfpmodel.h \
     create_connection.h \
     itemnumbersearch.h \
@@ -47,4 +46,7 @@ win32:RC_FILE = BiSz.rc
 OTHER_FILES += \
     menu.qml \
     MyButton.qml \
-    about.qml
+    about.qml \
+    main.qml \
+    SearchField.qml \
+    Product.qml
