@@ -4,10 +4,13 @@ FocusScope {
     id: wrapper
 
     signal accepted
+    signal cleared
 
     property alias text: input.text
     property alias hint: hint.text
     property alias prefix: prefix.text
+
+    focus: true
 
     Image {
         id: searchIcon
@@ -65,6 +68,18 @@ FocusScope {
            font.pixelSize: 18
            color: "#707070"
            onAccepted: wrapper.accepted()
+           /*
+           onTextChanged: {
+               if( input.text.length ) {
+                   resetIcon.source = "images/clearSearchLineEdit.jpg"
+               }
+               else {
+                   console.log("empty")
+                   resetIcon.source = "images/searchIcon.png"
+               }
+               //resetIcon.source = input.text.length == 0 ? "images/clearSearchLineEdit.jpg" : "images/searchIcon.png"
+           }
+           */
            clip: true
        }
 
@@ -78,7 +93,10 @@ FocusScope {
            anchors.verticalCenter: parent.verticalCenter
            MouseArea {
                anchors { fill: parent; margins: -10 }
-               onClicked: input.text = ""
+               onClicked: {
+                   input.text = ""
+                   wrapper.cleared()
+               }
            }
            visible: input.length ? 1 : 0
            opacity: 0.4
