@@ -115,6 +115,7 @@ private:
     int generateNewId();
     void updateCurrentRecordData();
     void updateSearchMatchCountLabel();
+    double roundWithPrecision(double f, double prec);
     void customFunction();
 
 private slots:

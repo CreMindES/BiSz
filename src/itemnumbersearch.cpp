@@ -141,7 +141,7 @@ ItemNumberSearch::ItemNumberSearch(QWidget *parent) :
 
     onOnlineSearchCheckBoxStateChanged();
 
-//    customFunction();
+    customFunction();
 }
 
 ItemNumberSearch::~ItemNumberSearch()
@@ -1670,21 +1670,47 @@ void ItemNumberSearch::customFunction()
         //currentRecord.setValue("purchase_price", currentRecord.value("purchase_price").toString().replace(',', '.'));
 
 
+//        if(currentRecord.value("name").toString().contains("fogantyú csavar",Qt::CaseInsensitive) ||
+//           currentRecord.value("name").toString().contains("facsavar",Qt::CaseInsensitive)) {
+//            continue;
+//        }
+//        else {
+//            double currentPrice = currentRecord.value("price").toDouble();
+
+//            if(currentPrice > 15) {
+//                int newPrice = round(currentPrice);
+//                currentRecord.setValue("price", newPrice);
+//            }
+//        }
+
+        double currentValue = currentRecord.value("price").toDouble();
+
         if(currentRecord.value("name").toString().contains("fogantyú csavar",Qt::CaseInsensitive) ||
-           currentRecord.value("name").toString().contains("facsavar",Qt::CaseInsensitive)) {
-            continue;
+           currentRecord.value("name").toString().contains("facsavar",Qt::CaseInsensitive) ||
+           currentRecord.value("name").toString().contains("tipli",Qt::CaseInsensitive))
+        {
+            currentRecord.setValue("price",
+                                   roundWithPrecision( currentValue * 1.06, 2 ) );
+            qDebug() << currentRecord.value("price").toDouble();
         }
         else {
             double currentPrice = currentRecord.value("price").toDouble();
 
-            if(currentPrice > 15) {
-                int newPrice = round(currentPrice);
+            if(currentPrice * 1.06 > 15) {
+                int newPrice = round(currentPrice * 1.06);
                 currentRecord.setValue("price", newPrice);
             }
         }
+
+        qDebug() << i;
 
         myModel->setRecord(i, currentRecord);
     }
 
     myModel->submitAll();
+}
+
+double ItemNumberSearch::roundWithPrecision(double f, double prec)
+{
+    return (int)(f * 100) / (double)100;
 }
